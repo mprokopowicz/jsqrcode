@@ -26,199 +26,199 @@
 
 function ECB(count,  dataCodewords)
 {
-	this.count = count;
-	this.dataCodewords = dataCodewords;
+  this.count = count;
+  this.dataCodewords = dataCodewords;
 	
-	this.__defineGetter__("Count", function()
+  this.__defineGetter__('Count', function()
 	{
-		return this.count;
-	});
-	this.__defineGetter__("DataCodewords", function()
+    return this.count;
+  });
+  this.__defineGetter__('DataCodewords', function()
 	{
-		return this.dataCodewords;
-	});
+    return this.dataCodewords;
+  });
 }
 
-function ECBlocks( ecCodewordsPerBlock,  ecBlocks1,  ecBlocks2)
+function ECBlocks(ecCodewordsPerBlock,  ecBlocks1,  ecBlocks2)
 {
-	this.ecCodewordsPerBlock = ecCodewordsPerBlock;
-	if(ecBlocks2)
-		this.ecBlocks = new Array(ecBlocks1, ecBlocks2);
-	else
-		this.ecBlocks = new Array(ecBlocks1);
+  this.ecCodewordsPerBlock = ecCodewordsPerBlock;
+  if (ecBlocks2)
+		{this.ecBlocks = new Array(ecBlocks1, ecBlocks2);}
+  else
+		{this.ecBlocks = new Array(ecBlocks1);}
 	
-	this.__defineGetter__("ECCodewordsPerBlock", function()
+  this.__defineGetter__('ECCodewordsPerBlock', function()
 	{
-		return this.ecCodewordsPerBlock;
-	});
+    return this.ecCodewordsPerBlock;
+  });
 	
-	this.__defineGetter__("TotalECCodewords", function()
+  this.__defineGetter__('TotalECCodewords', function()
 	{
-		return  this.ecCodewordsPerBlock * this.NumBlocks;
-	});
+    return  this.ecCodewordsPerBlock * this.NumBlocks;
+  });
 	
-	this.__defineGetter__("NumBlocks", function()
+  this.__defineGetter__('NumBlocks', function()
 	{
-		var total = 0;
-		for (var i = 0; i < this.ecBlocks.length; i++)
+    var total = 0;
+    for (var i = 0; i < this.ecBlocks.length; i++)
 		{
-			total += this.ecBlocks[i].length;
-		}
-		return total;
-	});
+      total += this.ecBlocks[i].length;
+    }
+    return total;
+  });
 	
-	this.getECBlocks=function()
+  this.getECBlocks = function()
 			{
-				return this.ecBlocks;
-			}
+    return this.ecBlocks;
+  };
 }
 
-function Version( versionNumber,  alignmentPatternCenters,  ecBlocks1,  ecBlocks2,  ecBlocks3,  ecBlocks4)
+function Version(versionNumber,  alignmentPatternCenters,  ecBlocks1,  ecBlocks2,  ecBlocks3,  ecBlocks4)
 {
-	this.versionNumber = versionNumber;
-	this.alignmentPatternCenters = alignmentPatternCenters;
-	this.ecBlocks = new Array(ecBlocks1, ecBlocks2, ecBlocks3, ecBlocks4);
+  this.versionNumber = versionNumber;
+  this.alignmentPatternCenters = alignmentPatternCenters;
+  this.ecBlocks = new Array(ecBlocks1, ecBlocks2, ecBlocks3, ecBlocks4);
 	
-	var total = 0;
-	var ecCodewords = ecBlocks1.ECCodewordsPerBlock;
-	var ecbArray = ecBlocks1.getECBlocks();
-	for (var i = 0; i < ecbArray.length; i++)
+  var total = 0;
+  var ecCodewords = ecBlocks1.ECCodewordsPerBlock;
+  var ecbArray = ecBlocks1.getECBlocks();
+  for (var i = 0; i < ecbArray.length; i++)
 	{
-		var ecBlock = ecbArray[i];
-		total += ecBlock.Count * (ecBlock.DataCodewords + ecCodewords);
-	}
-	this.totalCodewords = total;
+    var ecBlock = ecbArray[i];
+    total += ecBlock.Count * (ecBlock.DataCodewords + ecCodewords);
+  }
+  this.totalCodewords = total;
 	
-	this.__defineGetter__("VersionNumber", function()
+  this.__defineGetter__('VersionNumber', function()
 	{
-		return  this.versionNumber;
-	});
+    return  this.versionNumber;
+  });
 	
-	this.__defineGetter__("AlignmentPatternCenters", function()
+  this.__defineGetter__('AlignmentPatternCenters', function()
 	{
-		return  this.alignmentPatternCenters;
-	});
-	this.__defineGetter__("TotalCodewords", function()
+    return  this.alignmentPatternCenters;
+  });
+  this.__defineGetter__('TotalCodewords', function()
 	{
-		return  this.totalCodewords;
-	});
-	this.__defineGetter__("DimensionForVersion", function()
+    return  this.totalCodewords;
+  });
+  this.__defineGetter__('DimensionForVersion', function()
 	{
-		return  17 + 4 * this.versionNumber;
-	});
+    return  17 + 4 * this.versionNumber;
+  });
 	
-	this.buildFunctionPattern=function()
+  this.buildFunctionPattern = function()
 		{
-			var dimension = this.DimensionForVersion;
-			var bitMatrix = new BitMatrix(dimension);
+    var dimension = this.DimensionForVersion;
+    var bitMatrix = new BitMatrix(dimension);
 			
 			// Top left finder pattern + separator + format
-			bitMatrix.setRegion(0, 0, 9, 9);
+    bitMatrix.setRegion(0, 0, 9, 9);
 			// Top right finder pattern + separator + format
-			bitMatrix.setRegion(dimension - 8, 0, 8, 9);
+    bitMatrix.setRegion(dimension - 8, 0, 8, 9);
 			// Bottom left finder pattern + separator + format
-			bitMatrix.setRegion(0, dimension - 8, 9, 8);
+    bitMatrix.setRegion(0, dimension - 8, 9, 8);
 			
 			// Alignment patterns
-			var max = this.alignmentPatternCenters.length;
-			for (var x = 0; x < max; x++)
+    var max = this.alignmentPatternCenters.length;
+    for (var x = 0; x < max; x++)
 			{
-				var i = this.alignmentPatternCenters[x] - 2;
-				for (var y = 0; y < max; y++)
+      var i = this.alignmentPatternCenters[x] - 2;
+      for (var y = 0; y < max; y++)
 				{
-					if ((x == 0 && (y == 0 || y == max - 1)) || (x == max - 1 && y == 0))
+        if ((x == 0 && (y == 0 || y == max - 1)) || (x == max - 1 && y == 0))
 					{
 						// No alignment patterns near the three finder paterns
-						continue;
-					}
-					bitMatrix.setRegion(this.alignmentPatternCenters[y] - 2, i, 5, 5);
-				}
-			}
+          continue;
+        }
+        bitMatrix.setRegion(this.alignmentPatternCenters[y] - 2, i, 5, 5);
+      }
+    }
 			
 			// Vertical timing pattern
-			bitMatrix.setRegion(6, 9, 1, dimension - 17);
+    bitMatrix.setRegion(6, 9, 1, dimension - 17);
 			// Horizontal timing pattern
-			bitMatrix.setRegion(9, 6, dimension - 17, 1);
+    bitMatrix.setRegion(9, 6, dimension - 17, 1);
 			
-			if (this.versionNumber > 6)
+    if (this.versionNumber > 6)
 			{
 				// Version info, top right
-				bitMatrix.setRegion(dimension - 11, 0, 3, 6);
+      bitMatrix.setRegion(dimension - 11, 0, 3, 6);
 				// Version info, bottom left
-				bitMatrix.setRegion(0, dimension - 11, 6, 3);
-			}
+      bitMatrix.setRegion(0, dimension - 11, 6, 3);
+    }
 			
-			return bitMatrix;
-		}
-	this.getECBlocksForLevel=function( ecLevel)
+    return bitMatrix;
+  };
+  this.getECBlocksForLevel = function(ecLevel)
 	{
-		return this.ecBlocks[ecLevel.ordinal()];
-	}
+    return this.ecBlocks[ecLevel.ordinal()];
+  };
 }
 
 Version.VERSION_DECODE_INFO = new Array(0x07C94, 0x085BC, 0x09A99, 0x0A4D3, 0x0BBF6, 0x0C762, 0x0D847, 0x0E60D, 0x0F928, 0x10B78, 0x1145D, 0x12A17, 0x13532, 0x149A6, 0x15683, 0x168C9, 0x177EC, 0x18EC4, 0x191E1, 0x1AFAB, 0x1B08E, 0x1CC1A, 0x1D33F, 0x1ED75, 0x1F250, 0x209D5, 0x216F0, 0x228BA, 0x2379F, 0x24B0B, 0x2542E, 0x26A64, 0x27541, 0x28C69);
 
 Version.VERSIONS = buildVersions();
 
-Version.getVersionForNumber=function( versionNumber)
+Version.getVersionForNumber = function(versionNumber)
 {
-	if (versionNumber < 1 || versionNumber > 40)
+  if (versionNumber < 1 || versionNumber > 40)
 	{
-		throw "ArgumentException";
-	}
-	return Version.VERSIONS[versionNumber - 1];
-}
+    throw 'ArgumentException';
+  }
+  return Version.VERSIONS[versionNumber - 1];
+};
 
-Version.getProvisionalVersionForDimension=function(dimension)
+Version.getProvisionalVersionForDimension = function(dimension)
 {
-	if (dimension % 4 != 1)
+  if (dimension % 4 != 1)
 	{
-		throw "Error getProvisionalVersionForDimension";
-	}
-	try
+    throw 'Error getProvisionalVersionForDimension';
+  }
+  try
 	{
-		return Version.getVersionForNumber((dimension - 17) >> 2);
-	}
-	catch ( iae)
+    return Version.getVersionForNumber((dimension - 17) >> 2);
+  }
+  catch (iae)
 	{
-		throw "Error getVersionForNumber";
-	}
-}
+    throw 'Error getVersionForNumber';
+  }
+};
 
-Version.decodeVersionInformation=function( versionBits)
+Version.decodeVersionInformation = function(versionBits)
 {
-	var bestDifference = 0xffffffff;
-	var bestVersion = 0;
-	for (var i = 0; i < Version.VERSION_DECODE_INFO.length; i++)
+  var bestDifference = 0xffffffff;
+  var bestVersion = 0;
+  for (var i = 0; i < Version.VERSION_DECODE_INFO.length; i++)
 	{
-		var targetVersion = Version.VERSION_DECODE_INFO[i];
+    var targetVersion = Version.VERSION_DECODE_INFO[i];
 		// Do the version info bits match exactly? done.
-		if (targetVersion == versionBits)
+    if (targetVersion == versionBits)
 		{
-			return this.getVersionForNumber(i + 7);
-		}
+      return this.getVersionForNumber(i + 7);
+    }
 		// Otherwise see if this is the closest to a real version info bit string
 		// we have seen so far
-		var bitsDifference = FormatInformation.numBitsDiffering(versionBits, targetVersion);
-		if (bitsDifference < bestDifference)
+    var bitsDifference = FormatInformation.numBitsDiffering(versionBits, targetVersion);
+    if (bitsDifference < bestDifference)
 		{
-			bestVersion = i + 7;
-			bestDifference = bitsDifference;
-		}
-	}
+      bestVersion = i + 7;
+      bestDifference = bitsDifference;
+    }
+  }
 	// We can tolerate up to 3 bits of error since no two version info codewords will
 	// differ in less than 4 bits.
-	if (bestDifference <= 3)
+  if (bestDifference <= 3)
 	{
-		return this.getVersionForNumber(bestVersion);
-	}
+    return this.getVersionForNumber(bestVersion);
+  }
 	// If we didn't find a close enough match, fail
-	return null;
-}
+  return null;
+};
 
 function buildVersions()
 {
-	return new Array(new Version(1, new Array(), new ECBlocks(7, new ECB(1, 19)), new ECBlocks(10, new ECB(1, 16)), new ECBlocks(13, new ECB(1, 13)), new ECBlocks(17, new ECB(1, 9))), 
+  return new Array(new Version(1, new Array(), new ECBlocks(7, new ECB(1, 19)), new ECBlocks(10, new ECB(1, 16)), new ECBlocks(13, new ECB(1, 13)), new ECBlocks(17, new ECB(1, 9))), 
 	new Version(2, new Array(6, 18), new ECBlocks(10, new ECB(1, 34)), new ECBlocks(16, new ECB(1, 28)), new ECBlocks(22, new ECB(1, 22)), new ECBlocks(28, new ECB(1, 16))), 
 	new Version(3, new Array(6, 22), new ECBlocks(15, new ECB(1, 55)), new ECBlocks(26, new ECB(1, 44)), new ECBlocks(18, new ECB(2, 17)), new ECBlocks(22, new ECB(2, 13))), 
 	new Version(4, new Array(6, 26), new ECBlocks(20, new ECB(1, 80)), new ECBlocks(18, new ECB(2, 32)), new ECBlocks(26, new ECB(2, 24)), new ECBlocks(16, new ECB(4, 9))), 
